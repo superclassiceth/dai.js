@@ -80,10 +80,13 @@ export default class ManagedCdp {
     const events = await this._cdpManager
       .get(ServiceRoles.QUERY_API)
       .getCdpEventsForIlkAndUrn(this.ilk, urn);
-    return this._cdpManager.parseCdpEvents(
-      events,
-      this._cdpManager.get(ServiceRoles.CDP_TYPE)
-    );
+    const eventsWithIlk = events.map(e=> {
+      return {
+        ...e,
+        ilkIdentifier: this.ilk
+      };
+    });
+    return this._cdpManager.parseCdpEvents(eventsWithIlk);
   }
 
   getUrn() {

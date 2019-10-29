@@ -81,7 +81,7 @@ export default class CdpManager extends LocalService {
     const events = await this.get(QUERY_API).getCdpEventsForArrayOfIlksAndUrns(
       ilksAndUrns
     );
-    return this.parseCdpEvents(events, this.get(CDP_TYPE));
+    return this.parseCdpEvents(events);
   }
 
   @tracksTransactions
