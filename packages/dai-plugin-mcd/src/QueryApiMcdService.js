@@ -25,6 +25,37 @@ export default class QueryApi extends PublicService {
     }
   }
 
+  _buildCdpEventsQuery(ilk, urn) {
+    return `
+      frob: urnFrobs(ilkIdentifier: "${ilk}", urnIdentifier: "${urn}") {
+        nodes {
+          dart
+          dink
+          ilkRate
+          tx {
+            transactionHash
+            txFrom
+            era {
+              iso
+            }
+          }
+          ilkIdentifier
+        }
+      }
+      bite: allBites(ilkIdentifier: "${ilk}") {
+        nodes {
+          urnIdentifier
+          tx {
+            transactionHash
+            era {
+              iso
+            }
+            txFrom
+          }
+        }
+      }`;
+  }
+
   _buildFrobsQuery(ilk, urn) {
     return `
       urnFrobs(ilkIdentifier: "${ilk}", urnIdentifier: "${urn}") {
@@ -45,12 +76,19 @@ export default class QueryApi extends PublicService {
   }
 
   async getCdpEventsForIlkAndUrn(ilkName, urn) {
-    const query = '{' + this._buildFrobsQuery(ilkName, urn) + '}';
+    const query = '{' + this._buildCdpEventsQuery(ilkName, urn) + '}';
     const response = await getQueryResponse(this.serverUrl, query);
-    return response.urnFrobs.nodes;
+    const biteEvents = response.data.bite.nodes.filter(b => b.urnIdentifier === urn);
+    const events = [...response.data.frob.nodes, ...biteEvents]; //todo: add auction events
+    const eventsSorted = events.sort((a, b) => {
+      //sort by date descending
+      return new Date(b.tx.era.iso) - new Date(a.tx.era.iso);
+    });
+    return eventsSorted;
   }
 
   //takes in an array of objects with ilk and urn properties
+  //TODO: currently only returns frob events, update to include bite and auction events
   async getCdpEventsForArrayOfIlksAndUrns(cdps) {
     let query = '{';
     cdps.forEach((cdp, index) => {
