@@ -13,6 +13,7 @@ import { MDAI, ETH, GNT } from './index';
 const { CDP_MANAGER, CDP_TYPE, SYSTEM_DATA, QUERY_API } = ServiceRoles;
 import BigNumber from 'bignumber.js';
 import { RAY } from './constants';
+import compact from 'lodash/compact';
 
 export default class CdpManager extends LocalService {
   constructor(name = CDP_MANAGER) {
@@ -303,7 +304,7 @@ export default class CdpManager extends LocalService {
   }
 
   parseCdpEvents(events) {
-    return events.map(e => {
+    return compact(events.map(e => {
       if (e.eventType === 'frob') {
         const ilk = e.ilkIdentifier;
         const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
@@ -353,7 +354,39 @@ export default class CdpManager extends LocalService {
           changeInCollateral
         };
       }
-    });
+      if (e.eventType === 'kick') {
+        //save the lot size?
+        return;
+      }
+      if (e.eventType === 'dent') {
+        const amount = 15000000000000000000;//todo: calculate amount
+        const ilk = e.ilkIdentifier;
+        const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
+        const transactionHash = e.tx.transactionHash;
+        const changeInCollateral = currency.wei(amount);
+        const time = new Date(e.tx.era.iso);
+        const senderAddress = e.tx.txFrom;
+        return {
+          auctionProceeds: true,
+          transactionHash,
+          ilk,
+          time,
+          senderAddress,
+          changeInCollateral
+        };
+      }
+      if (e.eventType === 'deal') {
+        const transactionHash = e.tx.transactionHash;
+        const time = new Date(e.tx.era.iso);
+        const senderAddress = e.tx.txFrom;
+        return {
+          auctionEnded: true,
+          transactionHash,
+          time,
+          senderAddress,
+        };
+      }
+    }));
   }
 
   getIdBytes(id, prefix = true) {
