@@ -9,7 +9,7 @@ export function dummyEventData(ilkIdentifier) {
       ilkRate: '2000000000000000000000000000',
       tx: {
         transactionHash:
-          '0xbe023a205453b833e65bf29063de8b8b3bd44d2e68c9c079f681ec46a765a63f',
+          '0x37d1c253f79784313045d3922928f646020d545f17fc3d74a0d68e665db0b394',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
         era: { iso: '1970-01-01T00:01:20' }
       },
@@ -21,7 +21,7 @@ export function dummyEventData(ilkIdentifier) {
         transactionHash:
           '0xbe023a205453b833e65bf29063de8b8b3bd44d2e68c9c079f681ec46a765a63f',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
-        era: { iso: '1970-01-01T00:01:20' }
+        era: { iso: '2019-01-01T00:01:20' }
       },
       ilkIdentifier
     }
@@ -45,7 +45,7 @@ export function formattedDummyEventData(GEM, ilk) {
         '0xbe023a205453b833e65bf29063de8b8b3bd44d2e68c9c079f681ec46a765a63f',
       changeInCollateral: GEM(0),
       liquidated: true,
-      time: new Date(Date.now()),
+      time: new Date('2019-01-01T00:01:20'),
       senderAddress: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
       ilk
     }
