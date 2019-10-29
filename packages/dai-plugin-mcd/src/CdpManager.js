@@ -304,89 +304,80 @@ export default class CdpManager extends LocalService {
   }
 
   parseCdpEvents(events) {
-    return compact(events.map(e => {
-      if (e.eventType === 'frob') {
-        const ilk = e.ilkIdentifier;
-        const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
-        const transactionHash = e.tx.transactionHash;
-        const rate = new BigNumber(e.ilkRate.toString()).dividedBy(RAY);
-        const changeInCollateral = currency.wei(Math.abs(e.dink));
-        let collateralAction;
-        if (parseInt(e.dink) !== 0) {
-          collateralAction = parseInt(e.dink) > 0 ? 'lock' : 'free';
+    return compact(
+      events.map(e => {
+        if (e.eventType === 'kick') {
+          //save the lot size?
+          return;
         }
-        const dart = MDAI.wei(Math.abs(e.dart));
-        const changeInDai = dart.times(rate);
-        let daiAction;
-        if (parseInt(e.dart) !== 0) {
-          daiAction = parseInt(e.dart) > 0 ? 'draw' : 'wipe';
+
+        const ilk = e.ilkIdentifier;
+        const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
+        const transactionHash = e.tx.transactionHash;
+        const time = new Date(e.tx.era.iso);
+        const senderAddress = e.tx.txFrom;
+
+        if (e.eventType === 'frob') {
+          const rate = new BigNumber(e.ilkRate.toString()).dividedBy(RAY);
+          const changeInCollateral = currency.wei(Math.abs(e.dink));
+          let collateralAction;
+          if (parseInt(e.dink) !== 0) {
+            collateralAction = parseInt(e.dink) > 0 ? 'lock' : 'free';
+          }
+          const dart = MDAI.wei(Math.abs(e.dart));
+          const changeInDai = dart.times(rate);
+          let daiAction;
+          if (parseInt(e.dart) !== 0) {
+            daiAction = parseInt(e.dart) > 0 ? 'draw' : 'wipe';
+          }
+          //const resultingCollateral = currency.wei(e.urn.nodes[0].ink);
+          //const resultingDebt = MDAI.wei(e.urn.nodes[0].art);
+          return {
+            transactionHash,
+            changeInCollateral,
+            collateralAction,
+            changeInDai,
+            daiAction,
+            ilk,
+            time,
+            senderAddress
+            //resultingCollateral,
+            //resultingDebt
+          };
         }
-        const time = new Date(e.tx.era.iso);
-        const senderAddress = e.tx.txFrom;
-        //const resultingCollateral = currency.wei(e.urn.nodes[0].ink);
-        //const resultingDebt = MDAI.wei(e.urn.nodes[0].art);
-        return {
-          transactionHash,
-          changeInCollateral,
-          collateralAction,
-          changeInDai,
-          daiAction,
-          ilk,
-          time,
-          senderAddress
-          //resultingCollateral,
-          //resultingDebt
-        };
-      }
-      if (e.eventType === 'bite') {
-        const ilk = e.ilkIdentifier;
-        const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
-        const transactionHash = e.tx.transactionHash;
-        const changeInCollateral = currency.wei(0);
-        const time = new Date(e.tx.era.iso);
-        const senderAddress = e.tx.txFrom;
-        return {
-          liquidated: true,
-          transactionHash,
-          ilk,
-          time,
-          senderAddress,
-          changeInCollateral
-        };
-      }
-      if (e.eventType === 'kick') {
-        //save the lot size?
-        return;
-      }
-      if (e.eventType === 'dent') {
-        const amount = 15000000000000000000;//todo: calculate amount
-        const ilk = e.ilkIdentifier;
-        const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
-        const transactionHash = e.tx.transactionHash;
-        const changeInCollateral = currency.wei(amount);
-        const time = new Date(e.tx.era.iso);
-        const senderAddress = e.tx.txFrom;
-        return {
-          auctionProceeds: true,
-          transactionHash,
-          ilk,
-          time,
-          senderAddress,
-          changeInCollateral
-        };
-      }
-      if (e.eventType === 'deal') {
-        const transactionHash = e.tx.transactionHash;
-        const time = new Date(e.tx.era.iso);
-        const senderAddress = e.tx.txFrom;
-        return {
-          auctionEnded: true,
-          transactionHash,
-          time,
-          senderAddress,
-        };
-      }
-    }));
+        if (e.eventType === 'bite') {
+          const changeInCollateral = currency.wei(0);
+          return {
+            liquidated: true,
+            transactionHash,
+            ilk,
+            time,
+            senderAddress,
+            changeInCollateral
+          };
+        }
+        if (e.eventType === 'dent') {
+          const amount = 15000000000000000000; //todo: calculate amount
+          const changeInCollateral = currency.wei(amount);
+          return {
+            auctionProceeds: true,
+            transactionHash,
+            ilk,
+            time,
+            senderAddress,
+            changeInCollateral
+          };
+        }
+        if (e.eventType === 'deal') {
+          return {
+            auctionEnded: true,
+            transactionHash,
+            time,
+            senderAddress
+          };
+        }
+      })
+    );
   }
 
   getIdBytes(id, prefix = true) {
