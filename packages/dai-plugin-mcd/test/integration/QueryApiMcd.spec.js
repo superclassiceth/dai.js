@@ -22,7 +22,8 @@ beforeAll(async () => {
   service = maker.service(ServiceRoles.QUERY_API);
 });
 
-test('getPriceHistoryForPip for ETH', async () => {
+//vdb doesn't support pip events anymore, need to update to use the spot
+xtest('getPriceHistoryForPip for ETH', async () => {
   const prices = await service.getPriceHistoryForPip(
     '0x75dd74e8afe8110c8320ed397cccff3b8134d981'
   );
@@ -40,7 +41,7 @@ function expectFrobEvents(events) {
       !!event.tx.era.iso &&
       !!event.ilkIdentifier
   ).toBe(true);
-  expect(new Date(events[0].tx.era.iso) > new Date(events[1].tx.era.iso)).toBe(
+  expect(new Date(events[0].tx.era.iso) >= new Date(events[1].tx.era.iso)).toBe(
     true
   );
 }
@@ -59,11 +60,11 @@ const frobParams = {
   ],
   kovan: [
     {
-      urn: '0xAE21412A422279B72aA8641a3D5F1da4BF6cfD30',
+      urn: '0x47d62b6a1048508C32DaFE601B027a679be231d0',
       ilk: 'ETH-A'
     },
     {
-      urn: '0xB8de18329DAcA5c712a341596a66483366E3E3F6',
+      urn: '0xeCDb1a35be176C91EbD0FA7E1201F18e8A3A4B9E',
       ilk: 'ETH-A'
     }
   ]
