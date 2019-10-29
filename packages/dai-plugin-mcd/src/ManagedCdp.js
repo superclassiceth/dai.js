@@ -80,13 +80,12 @@ export default class ManagedCdp {
     const events = await this._cdpManager
       .get(ServiceRoles.QUERY_API)
       .getCdpEventsForIlkAndUrn(this.ilk, urn);
-    return this._cdpManager.parseFrobEvents(
+    return this._cdpManager.parseCdpEvents(
       events,
       this._cdpManager.get(ServiceRoles.CDP_TYPE)
     );
   }
 
-  //todo: add caching?
   getUrn() {
     return this._cdpManager.getUrn(this.id);
   }
