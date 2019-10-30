@@ -53,6 +53,31 @@ export default class QueryApi extends PublicService {
             txFrom
           }
         }
+      }
+      bid: allFlipBidEvents {
+        nodes {
+          tx {
+            nodes {
+              transactionHash
+              era {
+                iso
+              }
+              txFrom
+            }
+          }
+          bid {
+            lot
+            tab
+            urn {
+              nodes {
+                urnIdentifier
+              }
+            }
+          }
+          act
+          bidAmount
+          lot
+        }
       }`;
   }
 
@@ -78,8 +103,13 @@ export default class QueryApi extends PublicService {
   async getCdpEventsForIlkAndUrn(ilkName, urn) {
     const query = '{' + this._buildCdpEventsQuery(ilkName, urn) + '}';
     const response = await getQueryResponse(this.serverUrl, query);
-    const biteEvents = response.data.bite.nodes.filter(b => b.urnIdentifier === urn);
-    const events = [...response.data.frob.nodes, ...biteEvents]; //todo: add auction events
+    const biteEvents = response.data.bite.nodes.filter(
+      b => b.urnIdentifier === urn
+    );
+    const dentAndDealEvents = response.data.bid.nodes.filter(
+      b => b.bid.urn.nodes.urnIdentifier === urn && (b.act === 'DENT' || b.act === 'DEAL')
+    );
+    const events = [...response.data.frob.nodes, ...biteEvents, ...dentAndDealEvents];
     const eventsSorted = events.sort((a, b) => {
       //sort by date descending
       return new Date(b.tx.era.iso) - new Date(a.tx.era.iso);
