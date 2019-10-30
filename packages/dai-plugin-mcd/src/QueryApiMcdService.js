@@ -107,9 +107,15 @@ export default class QueryApi extends PublicService {
       b => b.urnIdentifier === urn
     );
     const dentAndDealEvents = response.data.bid.nodes.filter(
-      b => b.bid.urn.nodes.urnIdentifier === urn && (b.act === 'DENT' || b.act === 'DEAL')
+      b =>
+        b.bid.urn.nodes.urnIdentifier === urn &&
+        (b.act === 'DENT' || b.act === 'DEAL')
     );
-    const events = [...response.data.frob.nodes, ...biteEvents, ...dentAndDealEvents];
+    const events = [
+      ...response.data.frob.nodes,
+      ...biteEvents,
+      ...dentAndDealEvents
+    ];
     const eventsSorted = events.sort((a, b) => {
       //sort by date descending
       return new Date(b.tx.era.iso) - new Date(a.tx.era.iso);
