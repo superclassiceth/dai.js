@@ -304,7 +304,7 @@ export default class CdpManager extends LocalService {
     return this._manager.owns(this.getIdBytes(id));
   }
 
-  parseFrobEvent(e, ilk, currency, transactionHash, time, senderAddress){
+  parseFrobEvent(e, ilk, currency, transactionHash, time, senderAddress) {
     const rate = new BigNumber(e.ilkRate.toString()).dividedBy(RAY);
     const changeInCollateral = currency.wei(Math.abs(e.dink));
     let collateralAction;
@@ -347,7 +347,14 @@ export default class CdpManager extends LocalService {
         const senderAddress = e.tx.txFrom;
 
         if (e.eventType === 'frob') {
-          return this.parseFrobEvent(e, ilk, currency, transactionHash, time, senderAddress);
+          return this.parseFrobEvent(
+            e,
+            ilk,
+            currency,
+            transactionHash,
+            time,
+            senderAddress
+          );
         }
         if (e.eventType === 'bite') {
           const changeInCollateral = currency.wei(0);
