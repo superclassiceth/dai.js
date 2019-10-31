@@ -103,19 +103,33 @@ export default class QueryApi extends PublicService {
   async getCdpEventsForIlkAndUrn(ilkName, urn) {
     const query = '{' + this._buildCdpEventsQuery(ilkName, urn) + '}';
     const response = await getQueryResponse(this.serverUrl, query);
-    const biteEvents = response.data.bite.nodes.filter(
-      b => b.urnIdentifier === urn
-    );
-    const dentAndDealEvents = response.data.bid.nodes.filter(
-      b =>
-        b.bid.urn.nodes.urnIdentifier === urn &&
-        (b.act === 'DENT' || b.act === 'DEAL')
-    );
-    const events = [
-      ...response.data.frob.nodes,
-      ...biteEvents,
-      ...dentAndDealEvents
-    ];
+    const frobEvents = response['frob'].nodes.map(e => {
+      return {
+        ...e,
+        eventType: 'frob'
+      };
+    });
+    const biteEvents = response['bite'].nodes
+      .filter(b => b.urnIdentifier === urn)
+      .map(e => {
+        return {
+          ...e,
+          eventType: 'bite'
+        };
+      });
+    const bidEvents = response['bid'].nodes
+      .filter(
+        b =>
+          b.bid.urn.nodes.urnIdentifier === urn &&
+          (b.act === 'KICK' || b.act === 'DENT' || b.act === 'DEAL')
+      )
+      .map(e => {
+        return {
+          ...e,
+          eventType: 'bid'
+        };
+      });
+    const events = [...frobEvents, ...biteEvents, ...bidEvents];
     const eventsSorted = events.sort((a, b) => {
       //sort by date descending
       return new Date(b.tx.era.iso) - new Date(a.tx.era.iso);

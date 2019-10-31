@@ -30,8 +30,7 @@ xtest('getPriceHistoryForPip for ETH', async () => {
   expect(!!prices[0].val && !!prices[0].blockNumber).toBe(true);
 });
 
-function expectFrobEvents(events) {
-  const event = events[0];
+function expectFrobEvent(event) {
   expect(
     !!event.dart &&
       !!event.dink &&
@@ -41,9 +40,6 @@ function expectFrobEvents(events) {
       !!event.tx.era.iso &&
       !!event.ilkIdentifier
   ).toBe(true);
-  expect(new Date(events[0].tx.era.iso) >= new Date(events[1].tx.era.iso)).toBe(
-    true
-  );
 }
 
 //these are ilks  and urns that correspond to frobEvets in the current vdb data generator and remote kovan vdb instance
@@ -75,12 +71,15 @@ test('getCdpEventsForIlkAndUrn', async () => {
     frobParams[process.env.NETWORK][0].ilk,
     frobParams[process.env.NETWORK][0].urn
   );
-  expectFrobEvents(events);
+  events.forEach(e => {
+    if (e.eventType === 'frob') expectFrobEvent(e);
+    //todo: add other event types
+  });
 });
 
 test('getCdpEventsForArrayOfIlksAndUrns', async () => {
   const events = await service.getCdpEventsForArrayOfIlksAndUrns(
     frobParams[process.env.NETWORK]
   );
-  expectFrobEvents(events);
+  expectFrobEvent(events[0]);
 });

@@ -159,7 +159,7 @@ describe.each([
     await expectValues(cdp, { collateral: 0, debt: 0 });
   });
 
-  test.only('getEventHistory', async () => {
+  test('getEventHistory', async () => {
     const mockFn = jest.fn(async () => dummyEventData(ilk));
     maker.service(QUERY_API).getCdpEventsForIlkAndUrn = mockFn;
     const cdp = await maker.service(CDP_MANAGER).open(ilk);

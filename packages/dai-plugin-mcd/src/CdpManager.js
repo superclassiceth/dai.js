@@ -306,11 +306,10 @@ export default class CdpManager extends LocalService {
   parseCdpEvents(events) {
     return compact(
       events.map(e => {
-        if (e.eventType === 'kick') {
+        if (e.eventType === 'bid' && e.act === 'KICK') {
           //save the lot size?
           return;
         }
-
         const ilk = e.ilkIdentifier;
         const currency = this.get(CDP_TYPE).getCdpType(null, ilk).currency;
         const transactionHash = e.tx.transactionHash;
@@ -356,8 +355,8 @@ export default class CdpManager extends LocalService {
             changeInCollateral
           };
         }
-        if (e.eventType === 'dent') {
-          const amount = 15000000000000000000; //todo: calculate amount
+        if (e.eventType === 'bid' && e.act === 'DENT') {
+          const amount = 15000000000000000000; //todo: read this from bidAmount? lot?
           const changeInCollateral = currency.wei(amount);
           return {
             auctionProceeds: true,
@@ -368,10 +367,11 @@ export default class CdpManager extends LocalService {
             changeInCollateral
           };
         }
-        if (e.eventType === 'deal') {
+        if (e.eventType === 'bid' && e.act === 'DEAL') {
           return {
             auctionEnded: true,
             transactionHash,
+            ilk,
             time,
             senderAddress
           };

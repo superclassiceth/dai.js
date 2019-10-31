@@ -22,31 +22,31 @@ export function dummyEventData(ilkIdentifier) {
           '0xbe023a205453b833e65bf29063de8b8b3bd44d2e68c9c079f681ec46a765a63f',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
         era: { iso: '2019-01-01T00:01:20' }
-      },
-      ilkIdentifier
+      }
     },
     {
-      eventType: 'kick'
+      eventType: 'bid',
+      act: 'KICK'
     },
     {
-      eventType: 'dent',
+      eventType: 'bid',
+      act: 'DENT',
       tx: {
         transactionHash:
           '0xd7304f96f375c3c05a10f34a7555cbae14eea346d1f993e0e7dc8a5f9cbd91a7',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
         era: { iso: '2021-01-01T00:01:20' }
-      },
-      ilkIdentifier
+      }
     },
     {
-      eventType: 'deal',
+      eventType: 'bid',
+      act: 'DEAL',
       tx: {
         transactionHash:
           '0xd7304f96f375c3c05a10f34a7555cbae14eea346d1f993e0e7dc8a5f9cbd91a7',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
         era: { iso: '2022-01-01T00:01:20' }
-      },
-      ilkIdentifier
+      }
     }
   ];
 }
@@ -88,7 +88,8 @@ export function formattedDummyEventData(GEM, ilk) {
       //daiCancelled: MDA(100)
       auctionEnded: true,
       time: new Date('2022-01-01T00:01:20'),
-      senderAddress: '0x1ad35418e7b7c5746ea42295a1100480a810256a'
+      senderAddress: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
+      ilk
     }
   ];
 }
