@@ -304,6 +304,35 @@ export default class CdpManager extends LocalService {
     return this._manager.owns(this.getIdBytes(id));
   }
 
+  parseFrobEvent(e, ilk, currency, transactionHash, time, senderAddress){
+    const rate = new BigNumber(e.ilkRate.toString()).dividedBy(RAY);
+    const changeInCollateral = currency.wei(Math.abs(e.dink));
+    let collateralAction;
+    if (parseInt(e.dink) !== 0) {
+      collateralAction = parseInt(e.dink) > 0 ? 'lock' : 'free';
+    }
+    const dart = MDAI.wei(Math.abs(e.dart));
+    const changeInDai = dart.times(rate);
+    let daiAction;
+    if (parseInt(e.dart) !== 0) {
+      daiAction = parseInt(e.dart) > 0 ? 'draw' : 'wipe';
+    }
+    //const resultingCollateral = currency.wei(e.urn.nodes[0].ink);
+    //const resultingDebt = MDAI.wei(e.urn.nodes[0].art);
+    return {
+      transactionHash,
+      changeInCollateral,
+      collateralAction,
+      changeInDai,
+      daiAction,
+      ilk,
+      time,
+      senderAddress
+      //resultingCollateral,
+      //resultingDebt
+    };
+  }
+
   parseCdpEvents(events) {
     return compact(
       events.map(e => {
@@ -318,32 +347,7 @@ export default class CdpManager extends LocalService {
         const senderAddress = e.tx.txFrom;
 
         if (e.eventType === 'frob') {
-          const rate = new BigNumber(e.ilkRate.toString()).dividedBy(RAY);
-          const changeInCollateral = currency.wei(Math.abs(e.dink));
-          let collateralAction;
-          if (parseInt(e.dink) !== 0) {
-            collateralAction = parseInt(e.dink) > 0 ? 'lock' : 'free';
-          }
-          const dart = MDAI.wei(Math.abs(e.dart));
-          const changeInDai = dart.times(rate);
-          let daiAction;
-          if (parseInt(e.dart) !== 0) {
-            daiAction = parseInt(e.dart) > 0 ? 'draw' : 'wipe';
-          }
-          //const resultingCollateral = currency.wei(e.urn.nodes[0].ink);
-          //const resultingDebt = MDAI.wei(e.urn.nodes[0].art);
-          return {
-            transactionHash,
-            changeInCollateral,
-            collateralAction,
-            changeInDai,
-            daiAction,
-            ilk,
-            time,
-            senderAddress
-            //resultingCollateral,
-            //resultingDebt
-          };
+          return this.parseFrobEvent(e, ilk, currency, transactionHash, time, senderAddress);
         }
         if (e.eventType === 'bite') {
           const changeInCollateral = currency.wei(0);
