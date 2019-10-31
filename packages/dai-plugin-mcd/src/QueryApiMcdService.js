@@ -39,7 +39,6 @@ export default class QueryApi extends PublicService {
               iso
             }
           }
-          ilkIdentifier
         }
       }
       bite: allBites(ilkIdentifier: "${ilk}") {

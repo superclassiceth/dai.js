@@ -37,8 +37,7 @@ function expectFrobEvent(event) {
       !!event.ilkRate &&
       !!event.tx.transactionHash &&
       !!event.tx.txFrom &&
-      !!event.tx.era.iso &&
-      !!event.ilkIdentifier
+      !!event.tx.era.iso
   ).toBe(true);
 }
 

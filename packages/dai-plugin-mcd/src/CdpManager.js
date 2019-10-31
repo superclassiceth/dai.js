@@ -69,20 +69,21 @@ export default class CdpManager extends LocalService {
     return debts.reduce((a, b) => a.plus(b));
   }
 
-  async getCombinedEventHistory(proxyAddress) {
-    const cdpIds = await this.getCdpIds(proxyAddress);
-    const ilksAndUrns = await Promise.all(
-      cdpIds.map(async c => {
-        const urn = await this.getUrn(c.id);
-        const ilk = stringToBytes(c.ilk);
-        return { urn, ilk };
-      })
-    );
-    const events = await this.get(QUERY_API).getCdpEventsForArrayOfIlksAndUrns(
-      ilksAndUrns
-    );
-    return this.parseCdpEvents(events);
-  }
+  //todo: add a way to associate cdp events to their ilk
+  // async getCombinedEventHistory(proxyAddress) {
+  //   const cdpIds = await this.getCdpIds(proxyAddress);
+  //   const ilksAndUrns = await Promise.all(
+  //     cdpIds.map(async c => {
+  //       const urn = await this.getUrn(c.id);
+  //       const ilk = stringToBytes(c.ilk);
+  //       return { urn, ilk };
+  //     })
+  //   );
+  //   const events = await this.get(QUERY_API).getCdpEventsForArrayOfIlksAndUrns(
+  //     ilksAndUrns
+  //   );
+  //   return this.parseCdpEvents(events);
+  // }
 
   @tracksTransactions
   async open(ilk, { promise, cache = true }) {

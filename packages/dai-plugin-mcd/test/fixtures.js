@@ -1,6 +1,6 @@
 import { MDAI } from '../src';
 
-export function dummyEventData(ilkIdentifier) {
+export function dummyEventData() {
   return [
     {
       eventType: 'frob',
@@ -12,8 +12,7 @@ export function dummyEventData(ilkIdentifier) {
           '0x37d1c253f79784313045d3922928f646020d545f17fc3d74a0d68e665db0b394',
         txFrom: '0x1ad35418e7b7c5746ea42295a1100480a810256a',
         era: { iso: '1970-01-01T00:01:20' }
-      },
-      ilkIdentifier
+      }
     },
     {
       eventType: 'bite',

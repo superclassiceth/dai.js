@@ -160,7 +160,7 @@ describe.each([
   });
 
   test('getEventHistory', async () => {
-    const mockFn = jest.fn(async () => dummyEventData(ilk));
+    const mockFn = jest.fn(async () => dummyEventData());
     maker.service(QUERY_API).getCdpEventsForIlkAndUrn = mockFn;
     const cdp = await maker.service(CDP_MANAGER).open(ilk);
     const events = await cdp.getEventHistory();
