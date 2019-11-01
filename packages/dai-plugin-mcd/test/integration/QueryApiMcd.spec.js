@@ -43,10 +43,7 @@ function expectFrobEvent(event) {
 
 function expectBiteEvent(event) {
   expect(
-    !!event.urnIdentifier &&
-      !!event.tx.transactionHash &&
-      !!event.tx.txFrom &&
-      !!event.tx.era.iso
+    !!event.tx.transactionHash && !!event.tx.txFrom && !!event.tx.era.iso
   ).toBe(true);
 }
 
@@ -79,7 +76,8 @@ test('getCdpEventsForIlkAndUrn', async () => {
     frobParams[process.env.NETWORK][0].ilk,
     frobParams[process.env.NETWORK][0].urn
   );
-  let frob, bite = false;
+  let frob = false;
+  let bite = false;
   events.forEach(e => {
     if (e.eventType === 'frob') {
       frob = true;
@@ -91,7 +89,7 @@ test('getCdpEventsForIlkAndUrn', async () => {
     }
   });
   expect(frob && bite).toBe(true);
-},12000);
+}, 12000);
 
 // test('getCdpEventsForArrayOfIlksAndUrns', async () => {
 //   const events = await service.getCdpEventsForArrayOfIlksAndUrns(

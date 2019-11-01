@@ -27,29 +27,30 @@ export default class QueryApi extends PublicService {
 
   _buildCdpEventsQuery(ilk, urn) {
     return `
-      frob: urnFrobs(ilkIdentifier: "${ilk}", urnIdentifier: "${urn}") {
-        nodes {
-          dart
-          dink
-          ilkRate
-          tx {
-            transactionHash
-            txFrom
-            era {
-              iso
+      frobAndBite: getUrn(ilkIdentifier: "${ilk}", urnIdentifier: "${urn}") {
+        frobs {
+          nodes {
+            dart
+            dink
+            ilkRate
+            tx {
+              transactionHash
+              txFrom
+              era {
+                iso
+              }
             }
           }
         }
-      }
-      bite: allBites(ilkIdentifier: "${ilk}") {
-        nodes {
-          urnIdentifier
-          tx {
-            transactionHash
-            era {
-              iso
+        bites {
+          nodes {
+            tx {
+              transactionHash
+              era {
+                iso
+              }
+              txFrom
             }
-            txFrom
           }
         }
       }
@@ -102,20 +103,18 @@ export default class QueryApi extends PublicService {
   async getCdpEventsForIlkAndUrn(ilkName, urn) {
     const query = '{' + this._buildCdpEventsQuery(ilkName, urn) + '}';
     const response = await getQueryResponse(this.serverUrl, query);
-    const frobEvents = response['frob'].nodes.map(e => {
+    const frobEvents = response['frobAndBite']['frobs'].nodes.map(e => {
       return {
         ...e,
         eventType: 'frob'
       };
     });
-    const biteEvents = response['bite'].nodes
-      .filter(b => b.urnIdentifier === urn)
-      .map(e => {
-        return {
-          ...e,
-          eventType: 'bite'
-        };
-      });
+    const biteEvents = response['frobAndBite']['bites'].nodes.map(e => {
+      return {
+        ...e,
+        eventType: 'bite'
+      };
+    });
     const bidEvents = response['bid'].nodes
       .filter(
         b =>
